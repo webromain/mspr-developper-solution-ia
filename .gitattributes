@@ -1,0 +1,77 @@
+# ============================================================================
+# HealthAI Coach - Git Attributes
+# ============================================================================
+# Configure line ending handling for different file types
+# ============================================================================
+
+# Git config files (enforce LF)
+.gitattributes text eol=lf
+.gitignore text eol=lf
+
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# Scripts - Windows batch files (keep CRLF)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.com text eol=crlf
+
+# Scripts - Unix/Linux shell scripts (enforce LF)
+*.sh text eol=lf
+
+# Source code - normalize to LF
+*.py text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.sql text eol=lf
+*.md text eol=lf
+
+# Configuration files
+.env* text eol=lf
+.gitignore text eol=lf
+.dockerignore text eol=lf
+.eslintignore text eol=lf
+Makefile text eol=lf
+
+# Package managers
+Pipfile text eol=lf
+Pipfile.lock text eol=lf
+package.json text eol=lf
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+pnpm-lock.yaml text eol=lf
+requirements.txt text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# Binary files (don't touch)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.otf binary
+*.db binary
+*.sqlite3 binary
+*.whl binary
+
+# Archives
+*.tar binary
+*.rar binary

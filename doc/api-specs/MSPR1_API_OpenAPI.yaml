@@ -1,0 +1,1068 @@
+openapi: 3.0.0
+
+info:
+  title: HealthAI Coach - MSPR 1 Backend API
+  description: |
+    API REST pour gestion des données santé, nutrition et activité physique.
+    Phase 1: Collection, nettoyage et visualisation des données.
+  version: "1.0.0"
+  contact:
+    name: HealthAI Coach Team
+    email: support@healthai-coach.fr
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8000/api
+    description: Development server
+  - url: https://api.healthai-coach.fr/api
+    description: Production server
+
+tags:
+  - name: Patients
+    description: Patient management (CRUD, list, search)
+  - name: Santé
+    description: Health metrics (cholesterol, blood pressure, glucose, disease)
+  - name: Nutrition
+    description: Nutritional data and recommendations
+  - name: Activité Physique
+    description: Physical activity baseline and levels
+  - name: Séances Gym
+    description: Individual gym sessions and workouts
+  - name: KPIs
+    description: Key Performance Indicators and aggregations
+
+paths:
+  /patients/:
+    get:
+      summary: List all patients
+      operationId: listPatients
+      tags:
+        - Patients
+      parameters:
+        - name: page
+          in: query
+          description: Page number (pagination)
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          description: Number of results per page
+          schema:
+            type: integer
+            default: 20
+        - name: age
+          in: query
+          description: Filter by age
+          schema:
+            type: integer
+        - name: gender
+          in: query
+          description: Filter by gender (M, F, Autre)
+          schema:
+            type: string
+            enum: [M, F, Autre]
+      responses:
+        "200":
+          description: Successful list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  next:
+                    type: string
+                    nullable: true
+                  previous:
+                    type: string
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Patient"
+        "400":
+          description: Bad request (invalid parameters)
+        "500":
+          description: Server error
+
+    post:
+      summary: Create new patient
+      operationId: createPatient
+      tags:
+        - Patients
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatientCreate"
+      responses:
+        "201":
+          description: Patient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "400":
+          description: Validation error
+        "500":
+          description: Server error
+
+  /patients/{patient_id}/:
+    get:
+      summary: Get patient details
+      operationId: getPatient
+      tags:
+        - Patients
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Patient details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "404":
+          description: Patient not found
+        "500":
+          description: Server error
+
+    put:
+      summary: Update patient
+      operationId: updatePatient
+      tags:
+        - Patients
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatientCreate"
+      responses:
+        "200":
+          description: Patient updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "400":
+          description: Validation error
+        "404":
+          description: Patient not found
+        "500":
+          description: Server error
+
+    delete:
+      summary: Delete patient
+      operationId: deletePatient
+      tags:
+        - Patients
+      parameters:
+        - name: patient_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Patient deleted
+        "404":
+          description: Patient not found
+        "500":
+          description: Server error
+
+  /sante/:
+    get:
+      summary: List all health records
+      operationId: listSante
+      tags:
+        - Santé
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: severity
+          in: query
+          description: Filter by severity
+          schema:
+            type: string
+            enum: [Critique, Élevé, Modéré, Faible, Sain]
+        - name: disease_type
+          in: query
+          description: Filter by disease
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Health records list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Sante"
+        "400":
+          description: Bad request
+
+    post:
+      summary: Create health record
+      operationId: createSante
+      tags:
+        - Santé
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SanteCreate"
+      responses:
+        "201":
+          description: Health record created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sante"
+        "400":
+          description: Validation error
+
+  /sante/{sante_id}/:
+    get:
+      summary: Get health record details
+      operationId: getSante
+      tags:
+        - Santé
+      parameters:
+        - name: sante_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Health record details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sante"
+        "404":
+          description: Health record not found
+
+    put:
+      summary: Update health record
+      operationId: updateSante
+      tags:
+        - Santé
+      parameters:
+        - name: sante_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SanteCreate"
+      responses:
+        "200":
+          description: Health record updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sante"
+        "400":
+          description: Validation error
+        "404":
+          description: Not found
+
+    delete:
+      summary: Delete health record
+      operationId: deleteSante
+      tags:
+        - Santé
+      parameters:
+        - name: sante_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  /nutrition/:
+    get:
+      summary: List nutritional records
+      operationId: listNutrition
+      tags:
+        - Nutrition
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: adherence_min
+          in: query
+          description: Minimum adherence percentage
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Nutrition records list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Nutrition"
+
+    post:
+      summary: Create nutrition record
+      operationId: createNutrition
+      tags:
+        - Nutrition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NutritionCreate"
+      responses:
+        "201":
+          description: Nutrition record created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nutrition"
+        "400":
+          description: Validation error
+
+  /nutrition/{nutrition_id}/:
+    get:
+      summary: Get nutrition record
+      operationId: getNutrition
+      tags:
+        - Nutrition
+      parameters:
+        - name: nutrition_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Nutrition record details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nutrition"
+        "404":
+          description: Not found
+
+    put:
+      summary: Update nutrition record
+      operationId: updateNutrition
+      tags:
+        - Nutrition
+      parameters:
+        - name: nutrition_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NutritionCreate"
+      responses:
+        "200":
+          description: Nutrition record updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Nutrition"
+        "400":
+          description: Validation error
+        "404":
+          description: Not found
+
+    delete:
+      summary: Delete nutrition record
+      operationId: deleteNutrition
+      tags:
+        - Nutrition
+      parameters:
+        - name: nutrition_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  /activite/:
+    get:
+      summary: List physical activity records
+      operationId: listActivitePhysique
+      tags:
+        - Activité Physique
+      responses:
+        "200":
+          description: Physical activity records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ActivitePhysique"
+
+    post:
+      summary: Create physical activity record
+      operationId: createActivitePhysique
+      tags:
+        - Activité Physique
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ActivitePhysiqueCreate"
+      responses:
+        "201":
+          description: Activity record created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActivitePhysique"
+
+  /gym-sessions/:
+    get:
+      summary: List gym sessions
+      operationId: listGymSessions
+      tags:
+        - Séances Gym
+      parameters:
+        - name: patient_id
+          in: query
+          schema:
+            type: integer
+        - name: workout_type
+          in: query
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Gym sessions list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  results:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/GymSession"
+
+    post:
+      summary: Record new gym session
+      operationId: createGymSession
+      tags:
+        - Séances Gym
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GymSessionCreate"
+      responses:
+        "201":
+          description: Gym session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GymSession"
+        "400":
+          description: Validation error
+
+  /gym-sessions/{session_id}/:
+    get:
+      summary: Get gym session details
+      operationId: getGymSession
+      tags:
+        - Séances Gym
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Gym session details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GymSession"
+        "404":
+          description: Not found
+
+    put:
+      summary: Update gym session
+      operationId: updateGymSession
+      tags:
+        - Séances Gym
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GymSessionCreate"
+      responses:
+        "200":
+          description: Gym session updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GymSession"
+        "404":
+          description: Not found
+
+    delete:
+      summary: Delete gym session
+      operationId: deleteGymSession
+      tags:
+        - Séances Gym
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+
+  /kpis/health:
+    get:
+      summary: Get health KPIs
+      operationId: getKPIHealth
+      tags:
+        - KPIs
+      description: |
+        Aggregated health metrics:
+        - Total patients count
+        - Average age, BMI
+        - Average cholesterol, glucose
+        - Disease type distribution
+        - Healthy vs unhealthy percentage
+      responses:
+        "200":
+          description: Health KPIs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KPIHealth"
+
+  /kpis/engagement:
+    get:
+      summary: Get engagement KPIs
+      operationId: getKPIEngagement
+      tags:
+        - KPIs
+      description: |
+        User engagement metrics:
+        - Active patients count
+        - Engagement rate (%)
+        - Gym sessions per patient
+        - Average session duration
+      responses:
+        "200":
+          description: Engagement KPIs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KPIEngagement"
+
+  /kpis/conversion:
+    get:
+      summary: Get conversion KPIs
+      operationId: getKPIConversion
+      tags:
+        - KPIs
+      description: |
+        Adherence and behavior metrics:
+        - Diet plan adherence rate
+        - Recommended vs actual exercise
+        - Goal achievement percentage
+      responses:
+        "200":
+          description: Conversion KPIs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KPIConversion"
+
+  /kpis/satisfaction:
+    get:
+      summary: Get satisfaction KPIs
+      operationId: getKPISatisfaction
+      tags:
+        - KPIs
+      description: |
+        Health outcome satisfaction:
+        - Healthy cholesterol percentage
+        - Healthy glucose percentage
+        - Normal BMI percentage
+        - Disease severity distribution
+      responses:
+        "200":
+          description: Satisfaction KPIs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KPISatisfaction"
+
+components:
+  schemas:
+    Patient:
+      type: object
+      required:
+        - patient_id
+        - age
+        - gender
+        - weight_kg
+        - height_cm
+      properties:
+        patient_id:
+          type: integer
+          description: Unique patient identifier
+        age:
+          type: integer
+          minimum: 18
+          maximum: 120
+          description: Age in years
+        gender:
+          type: string
+          enum: [M, F, Autre]
+          description: Gender
+        weight_kg:
+          type: number
+          format: float
+          minimum: 30
+          maximum: 300
+          description: Weight in kilograms
+        height_cm:
+          type: number
+          format: float
+          minimum: 100
+          maximum: 250
+          description: Height in centimeters
+        bmi:
+          type: number
+          format: float
+          description: Body Mass Index (calculated)
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    PatientCreate:
+      type: object
+      required:
+        - age
+        - gender
+        - weight_kg
+        - height_cm
+      properties:
+        age:
+          type: integer
+          minimum: 18
+          maximum: 120
+        gender:
+          type: string
+          enum: [M, F, Autre]
+        weight_kg:
+          type: number
+          format: float
+          minimum: 30
+          maximum: 300
+        height_cm:
+          type: number
+          format: float
+          minimum: 100
+          maximum: 250
+
+    Sante:
+      type: object
+      properties:
+        sante_id:
+          type: integer
+        patient_id:
+          type: integer
+        cholesterol:
+          type: integer
+          minimum: 100
+          maximum: 400
+          description: Cholesterol level (mg/dL)
+        blood_pressure:
+          type: string
+          description: Blood pressure (format 120/80)
+        disease_type:
+          type: string
+          nullable: true
+          description: Type of disease (Diabète, Hypertension, etc.)
+        glucose:
+          type: integer
+          minimum: 50
+          maximum: 300
+          description: Glucose level (mg/dL)
+        severity:
+          type: string
+          enum: [Critique, Élevé, Modéré, Faible, Sain]
+          description: Overall health severity
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SanteCreate:
+      type: object
+      required:
+        - patient_id
+        - cholesterol
+        - blood_pressure
+        - glucose
+        - severity
+      properties:
+        patient_id:
+          type: integer
+        cholesterol:
+          type: integer
+          minimum: 100
+          maximum: 400
+        blood_pressure:
+          type: string
+        disease_type:
+          type: string
+          nullable: true
+        glucose:
+          type: integer
+          minimum: 50
+          maximum: 300
+        severity:
+          type: string
+          enum: [Critique, Élevé, Modéré, Faible, Sain]
+
+    Nutrition:
+      type: object
+      properties:
+        nutrition_id:
+          type: integer
+        patient_id:
+          type: integer
+        daily_caloric_intake:
+          type: integer
+          description: Daily caloric intake (kcal)
+        dietary_restrictions:
+          type: array
+          items:
+            type: string
+          description: Dietary restrictions (vegetarian, vegan, gluten-free, etc.)
+        allergies:
+          type: array
+          items:
+            type: string
+          description: Food allergies
+        diet_recommendation:
+          type: string
+          description: Diet type recommendation (Équilibré, Gain musculaire, etc.)
+        adherence_to_diet_plan:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          description: Adherence percentage
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    NutritionCreate:
+      type: object
+      required:
+        - patient_id
+        - daily_caloric_intake
+        - diet_recommendation
+      properties:
+        patient_id:
+          type: integer
+        daily_caloric_intake:
+          type: integer
+          minimum: 800
+          maximum: 5000
+        dietary_restrictions:
+          type: array
+          items:
+            type: string
+        allergies:
+          type: array
+          items:
+            type: string
+        diet_recommendation:
+          type: string
+        adherence_to_diet_plan:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+
+    ActivitePhysique:
+      type: object
+      properties:
+        activite_id:
+          type: integer
+        patient_id:
+          type: integer
+        physical_activity_level:
+          type: string
+          enum: [Sédentaire, Faible, Modéré, Intense, Très intense]
+        weekly_exercice_hours:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 168
+          description: Exercise hours per week
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ActivitePhysiqueCreate:
+      type: object
+      required:
+        - patient_id
+        - physical_activity_level
+        - weekly_exercice_hours
+      properties:
+        patient_id:
+          type: integer
+        physical_activity_level:
+          type: string
+          enum: [Sédentaire, Faible, Modéré, Intense, Très intense]
+        weekly_exercice_hours:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 168
+
+    GymSession:
+      type: object
+      properties:
+        session_id:
+          type: integer
+        patient_id:
+          type: integer
+        duration:
+          type: integer
+          description: Duration in minutes
+        calories_burned:
+          type: integer
+          description: Calories burned in session
+        workout_type:
+          type: string
+          description: Type of workout (Cardio, Musculation, Yoga, etc.)
+        BPM:
+          type: integer
+          minimum: 40
+          maximum: 220
+          description: Average heart rate (beats per minute)
+        fat_percentage:
+          type: number
+          format: float
+          description: Fat percentage measured
+        water_intake:
+          type: number
+          format: float
+          description: Water intake in liters
+        experience_level:
+          type: string
+          enum: [Débutant, Intermédiaire, Avancé, Expert]
+        session_date:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    GymSessionCreate:
+      type: object
+      required:
+        - patient_id
+        - duration
+        - calories_burned
+        - workout_type
+        - BPM
+      properties:
+        patient_id:
+          type: integer
+        duration:
+          type: integer
+          minimum: 1
+          maximum: 480
+        calories_burned:
+          type: integer
+          minimum: 0
+          maximum: 2000
+        workout_type:
+          type: string
+        BPM:
+          type: integer
+          minimum: 40
+          maximum: 220
+        fat_percentage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        water_intake:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 10
+        experience_level:
+          type: string
+          enum: [Débutant, Intermédiaire, Avancé, Expert]
+
+    KPIHealth:
+      type: object
+      properties:
+        total_patients:
+          type: integer
+        avg_age:
+          type: number
+          format: float
+        avg_bmi:
+          type: number
+          format: float
+        avg_cholesterol:
+          type: number
+          format: float
+        disease_distribution:
+          type: object
+          additionalProperties:
+            type: integer
+        healthy_percentage:
+          type: number
+          format: float
+          description: Percentage of patients with 'Sain' severity
+
+    KPIEngagement:
+      type: object
+      properties:
+        active_patients:
+          type: integer
+        engagement_rate:
+          type: number
+          format: float
+          description: Percentage of active users
+        avg_sessions_per_patient:
+          type: number
+          format: float
+        avg_session_duration:
+          type: number
+          format: float
+          description: Duration in minutes
+
+    KPIConversion:
+      type: object
+      properties:
+        diet_adherence_rate:
+          type: number
+          format: float
+          description: Percentage with adherence >= 75%
+        recommended_exercise_rate:
+          type: number
+          format: float
+          description: Percentage with >= 3 hours/week
+
+    KPISatisfaction:
+      type: object
+      properties:
+        healthy_cholesterol_pct:
+          type: number
+          format: float
+        healthy_glucose_pct:
+          type: number
+          format: float
+        normal_bmi_pct:
+          type: number
+          format: float
+        severity_distribution:
+          type: object
+          additionalProperties:
+            type: integer

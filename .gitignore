@@ -1,0 +1,330 @@
+# ============================================================================
+# HealthAI Coach - .gitignore
+# ============================================================================
+# Global ignores for Python, Node.js, IDEs, OS, and project-specific files
+
+# ============================================================================
+# Python
+# ============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.env.local
+.env.*.local
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ============================================================================
+# Node / npm / Yarn
+# ============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Production frontend
+frontend/dist/
+frontend/build/
+
+# Vite
+.vite/
+
+# Dependencies
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional npm cache directory
+.npm
+
+# ============================================================================
+# IDEs and Editors
+# ============================================================================
+# VS Code
+.vscode/
+*.code-workspace
+.history/
+
+# PyCharm / IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+*~
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Nano
+.nano_history
+
+# ============================================================================
+# Operating Systems
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+
+# ============================================================================
+# Docker
+# ============================================================================
+.dockerignore
+docker-compose.override.yml
+
+# ============================================================================
+# Project-Specific
+# ============================================================================
+# Reports and logs
+reports/
+logs/
+*.log
+
+# Data (temporary, generated)
+data/
+*.csv.bak
+*.csv.tmp
+
+# Database dumps
+*.sql.bak
+*.db.bak
+dump.sql
+
+# Credentials and secrets
+*.pem
+*.key
+*.keystore
+*.jks
+secrets/
+.env.production
+credentials.json
+aws_credentials
+
+# Media uploads
+media/
+uploads/
+user_uploads/
+
+# Cache files
+.cache/
+*.cache
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.bak
+*.swp
+
+# OS temp files
+~*
+*~
+._*
+
+# ============================================================================
+# Tests & Coverage
+# ============================================================================
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.pytest_cache/
+test-results/
+coverage.xml
+
+# ============================================================================
+# Build artifacts
+# ============================================================================
+dist/
+build/
+*.whl
+*.tar.gz
+
+# ============================================================================
+# IDE Generated files (additional)
+# ============================================================================
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# ============================================================================
+# Python environment management
+# ============================================================================
+poetry.lock
+Pipfile.lock
+setup.cfg
+
+# ============================================================================
+# System files (to be extra sure)
+# ============================================================================
+*.DS_Store
+.localized
+
+# ============================================================================
+# Allow these files (exceptions)
+# ============================================================================
+# Use ! prefix to allow files that would otherwise be ignored
+
+# Allow Docker files
+!.dockerignore
+!Dockerfile
+!docker-compose.yml
+
+# Allow configuration examples
+!.env.example
+!.env.local.example
+
+# Allow essential config files
+!.eslintignore
+!.prettierignore
+!.flake8
+!setup.cfg
